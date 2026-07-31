@@ -1,0 +1,5 @@
+---
+layout: none
+permalink: .well-known/org.flathub.VerifiedApps.txt
+---
+# verification file
