@@ -60,17 +60,32 @@
         <img class="logo-image" src="../images/logo.svg" alt="" width="32" height="32">
         <span>BandPass Records</span>
       </a>
-      <div class="nav-links">
-        <a href="../discography/" data-i18n="nav.discography" aria-current="page">Discography</a>
-        <a href="../music-projects/" data-i18n="nav.music">Music projects</a>
-        <a href="../other-projects/" data-i18n="nav.other">Other projects</a>
-        <a href="../#contact" data-i18n="nav.contact">Contact</a>
+      <div class="nav-links" id="site-menu">
+        <div class="nav-item" data-menu="discography">
+          <a class="nav-top" href="../discography/" data-i18n="nav.discography" aria-current="page">Discography</a>
+          <button type="button" class="nav-caret" aria-expanded="false" aria-controls="menu-discography" data-i18n-attr="aria-label:nav.more" aria-label="More">
+            <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg>
+          </button>
+          <div class="nav-menu" id="menu-discography" data-menu-panel="discography"></div>
+        </div>
+        <div class="nav-item" data-menu="software">
+          <a class="nav-top" href="../software/" data-i18n="nav.software">Software</a>
+          <button type="button" class="nav-caret" aria-expanded="false" aria-controls="menu-software" data-i18n-attr="aria-label:nav.more" aria-label="More">
+            <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg>
+          </button>
+          <div class="nav-menu" id="menu-software" data-menu-panel="software"></div>
+        </div>
+        <a class="nav-top" href="../#about" data-i18n="nav.about">About</a>
+        <a class="nav-top" href="../#contact" data-i18n="nav.contact">Contact</a>
       </div>
       <div class="lang-switch" role="group" data-i18n-attr="aria-label:lang.label" aria-label="Language">
         <button type="button" data-lang-choice="en" lang="en" title="English">EN</button>
         <button type="button" data-lang-choice="pt" lang="pt" title="Português">PT</button>
         <button type="button" data-lang-choice="es" lang="es" title="Español">ES</button>
       </div>
+      <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="site-menu" data-i18n-attr="aria-label:nav.menu" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </nav>
 

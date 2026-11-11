@@ -60,17 +60,32 @@
         <img class="logo-image" src="images/logo.svg" alt="" width="32" height="32">
         <span>BandPass Records</span>
       </a>
-      <div class="nav-links">
-        <a href="discography/" data-i18n="nav.discography">Discography</a>
-        <a href="music-projects/" data-i18n="nav.music">Music projects</a>
-        <a href="other-projects/" data-i18n="nav.other">Other projects</a>
-        <a href="#contact" data-i18n="nav.contact">Contact</a>
+      <div class="nav-links" id="site-menu">
+        <div class="nav-item" data-menu="discography">
+          <a class="nav-top" href="discography/" data-i18n="nav.discography">Discography</a>
+          <button type="button" class="nav-caret" aria-expanded="false" aria-controls="menu-discography" data-i18n-attr="aria-label:nav.more" aria-label="More">
+            <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg>
+          </button>
+          <div class="nav-menu" id="menu-discography" data-menu-panel="discography"></div>
+        </div>
+        <div class="nav-item" data-menu="software">
+          <a class="nav-top" href="software/" data-i18n="nav.software">Software</a>
+          <button type="button" class="nav-caret" aria-expanded="false" aria-controls="menu-software" data-i18n-attr="aria-label:nav.more" aria-label="More">
+            <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg>
+          </button>
+          <div class="nav-menu" id="menu-software" data-menu-panel="software"></div>
+        </div>
+        <a class="nav-top" href="#about" data-i18n="nav.about">About</a>
+        <a class="nav-top" href="#contact" data-i18n="nav.contact">Contact</a>
       </div>
       <div class="lang-switch" role="group" data-i18n-attr="aria-label:lang.label" aria-label="Language">
         <button type="button" data-lang-choice="en" lang="en" title="English">EN</button>
         <button type="button" data-lang-choice="pt" lang="pt" title="Português">PT</button>
         <button type="button" data-lang-choice="es" lang="es" title="Español">ES</button>
       </div>
+      <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="site-menu" data-i18n-attr="aria-label:nav.menu" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </nav>
 
@@ -92,35 +107,64 @@
           <b data-i18n="hero.news">New release</b><span></span>
         </a>
         <img class="hero-mark" src="images/logo.svg" alt="" width="88" height="88">
+        <p class="section-eyebrow" data-i18n="hero.eyebrow">Independent label · Software studio</p>
         <h1 class="hero-title">
           <span data-i18n="hero.title1">Music, and the</span>
           <span class="gradient-text" data-i18n="hero.title2">tools we make it with.</span>
         </h1>
         <p class="hero-subtitle" data-i18n="hero.sub">
-          An independent psytrance label releasing Audio Crawler, High Sense and TetraSound, and a studio
-          building software for producers: project management across every DAW, headphone and speaker
-          calibration, synths and release promo.
+          BandPass Records is an independent psytrance label and a small software studio. We release music from
+          Audio Crawler, High Sense and TetraSound, and build the tools we wish we'd had: for producers, for labels,
+          and a few for everyone else.
         </p>
         <div class="hero-buttons">
           <a class="btn btn-primary" href="discography/" data-i18n="hero.cta1">Listen to the catalog</a>
-          <a class="btn btn-secondary" href="music-projects/" data-i18n="hero.cta2">Explore the tools</a>
+          <a class="btn btn-secondary" href="software/" data-i18n="hero.cta2">Explore our software</a>
         </div>
       </div>
       <dl class="stats container" id="stats"></dl>
     </header>
 
-    <section class="section" aria-labelledby="explore-title">
-      <div class="container">
-        <div class="section-head">
-          <p class="section-eyebrow" data-i18n="home.eyebrow">Explore</p>
-          <h2 class="section-title" id="explore-title" data-i18n="home.title">Everything we make.</h2>
+    <section class="section" id="about" aria-labelledby="about-title">
+      <div class="container about">
+        <div class="about-copy">
+          <p class="section-eyebrow" data-i18n="about.eyebrow">About</p>
+          <h2 class="section-title" id="about-title" data-i18n="about.title">A label that also writes software.</h2>
+          <p data-i18n="about.p1">We started as a record label, putting out psytrance from artists we believe in.</p>
+          <p data-i18n="about.p2">Making music meant juggling projects across DAWs, calibrating headphones and cutting promo videos by hand, so we started writing software for it.</p>
+          <p data-i18n="about.p3">Lately the studio has gone beyond music, with apps like Negativo and Retro1.</p>
         </div>
-        <div class="categories" id="categories"></div>
+        <div class="pillars" id="pillars"></div>
+      </div>
+    </section>
+
+    <section class="section section-alt" aria-labelledby="latest-title">
+      <div class="container">
+        <div class="row-head">
+          <div>
+            <p class="section-eyebrow" data-i18n="latest.eyebrow">Latest release</p>
+            <h2 class="section-title" id="latest-title"></h2>
+          </div>
+          <a class="textlink" href="discography/"><span data-i18n="latest.cta">Full discography</span> →</a>
+        </div>
+        <div id="latest"></div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="featured-title">
+      <div class="container">
+        <div class="row-head">
+          <div>
+            <p class="section-eyebrow" data-i18n="featured.eyebrow">Software</p>
+            <h2 class="section-title" id="featured-title" data-i18n="featured.title">Made by the studio.</h2>
+          </div>
+          <a class="textlink" href="software/"><span data-i18n="featured.cta">All software</span> →</a>
+        </div>
+        <div class="featured" id="featured"></div>
         <noscript>
           <ul class="noscript">
             <li><a href="discography/">Discography</a></li>
-            <li><a href="music-projects/">Music projects</a></li>
-            <li><a href="other-projects/">Other projects</a></li>
+            <li><a href="software/">Software</a></li>
           </ul>
         </noscript>
       </div>

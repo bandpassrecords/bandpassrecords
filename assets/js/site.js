@@ -2,11 +2,11 @@
  * Renders the site from data.js in the language picked from i18n.js.
  *
  * One script for every page: it fills whichever containers the page has.
- *   home               #stats, #hero-news, #categories
+ *   every page         the nav's drop-down menus ([data-menu-panel]), #social
+ *   home               #hero-news, #stats, #pillars, #latest, #featured
  *   discography/       #artists, #years, #releases (filters kept in the URL:
  *                      ?artist=high-sense&year=2022, so a view can be shared)
- *   music-projects/    [data-projects="music"]
- *   other-projects/    [data-projects="other"]
+ *   software/          [data-projects="music"], [data-projects="other"]
  *
  * <html data-base> is the path from the page back to the site root ("" on
  * the home page, "../" one folder down); every image and page link is built
@@ -93,9 +93,9 @@
      over http(s), as on GitHub Pages, links stay as written. */
   var AS_FILE = location.protocol === 'file:';
 
-  function fixFileLinks(scope) {
+  function fixFileLinks() {
     if (!AS_FILE) return;
-    Array.prototype.forEach.call((scope || document).querySelectorAll('a[href]'), function (a) {
+    $$('a[href]').forEach(function (a) {
       var href = a.getAttribute('href');
       if (/^[a-z]+:|^\/\//i.test(href)) return; // external, mailto:
       var m = href.match(/^([^?#]*)(.*)$/);
@@ -115,8 +115,27 @@
     return releases.filter(function (r) { return !artistSlug || slug(r.artist) === artistSlug; });
   }
 
+  function yearSpan(items) {
+    var years = items.map(yearOf);
+    if (!years.length) return '';
+    var first = years[years.length - 1], last = years[0];
+    return first === last ? first : first + '–' + last;
+  }
+
   function projectsIn(group) {
     return DATA.projects.filter(function (p) { return p.group === group; });
+  }
+
+  /* Where a project leads: its own site (or download page) when it is
+     online, otherwise its card on the software page. */
+  function projectHref(p) {
+    return p.url && p.live !== false ? p.url : BASE + 'software/#' + p.id;
+  }
+
+  function projectIcon(p, cls) {
+    if (p.icon) return '<img class="' + cls + '" src="' + BASE + 'images/products/' + esc(p.icon) + '" alt="" loading="lazy" width="56" height="56">';
+    var initials = p.name.replace(/[^A-Za-z0-9 ]/g, '').split(/\s+/).map(function (w) { return w[0]; }).join('').slice(0, 2);
+    return '<span class="' + cls + ' project-icon--letter" aria-hidden="true">' + esc(initials) + '</span>';
   }
 
   /* ---------- language ---------- */
@@ -151,6 +170,62 @@
     });
   }
 
+  /* ---------- nav menus ---------- */
+
+  function menuRow(href, media, title, sub) {
+    return '<a class="menu-row" href="' + esc(href) + '">' + media +
+      '<span><b>' + esc(title) + '</b>' + (sub ? '<small>' + esc(sub) + '</small>' : '') + '</span></a>';
+  }
+
+  function renderMenus() {
+    var disc = $('[data-menu-panel="discography"]');
+    if (disc) {
+      disc.innerHTML =
+        '<div class="menu-col">' +
+          menuRow(BASE + 'discography/', '<span class="menu-media menu-media--logo"><img src="' + BASE + 'images/logo.svg" alt=""></span>',
+            t('menu.allReleases'), t('artist.releases', { n: releases.length }) + ' · ' + yearSpan(releases)) +
+          DATA.artists.map(function (a) {
+            var own = releasesBy(slug(a.name));
+            return menuRow(BASE + 'discography/?artist=' + slug(a.name),
+              own[0] ? '<img class="menu-media" src="' + cover(own[0]) + '" alt="" loading="lazy">' : '',
+              a.name, t('artist.releases', { n: own.length }) + ' · ' + yearSpan(own));
+          }).join('') +
+        '</div>';
+    }
+
+    var soft = $('[data-menu-panel="software"]');
+    if (soft) {
+      var col = function (group, titleKey) {
+        return '<div class="menu-col"><p class="menu-label">' + esc(t(titleKey)) + '</p>' +
+          projectsIn(group).map(function (p) {
+            return menuRow(projectHref(p), projectIcon(p, 'menu-media'), p.name, loc(p.tagline));
+          }).join('') + '</div>';
+      };
+      soft.innerHTML =
+        '<div class="menu-cols">' + col('music', 'menu.forMusic') + col('other', 'menu.beyond') + '</div>' +
+        '<a class="menu-foot" href="' + BASE + 'software/">' + esc(t('menu.allSoftware')) + ' →</a>';
+    }
+  }
+
+  function closeMenus(except) {
+    $$('.nav-item.open').forEach(function (item) {
+      if (item === except) return;
+      item.classList.remove('open');
+      item.querySelector('.nav-caret').setAttribute('aria-expanded', 'false');
+    });
+  }
+
+  function setMobileMenu(open) {
+    var nav = $('.navbar');
+    var toggle = $('.menu-toggle');
+    if (!nav || !toggle) return;
+    // The panel fills the screen below the bar, and the page behind stays put.
+    nav.style.setProperty('--nav-bottom', nav.getBoundingClientRect().bottom + 'px');
+    nav.classList.toggle('menu-open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+    toggle.setAttribute('aria-expanded', String(open));
+  }
+
   /* ---------- home ---------- */
 
   function renderHero() {
@@ -175,57 +250,75 @@
     }).join('');
   }
 
-  function statusSummary(items) {
-    return '<ul class="cat-status">' + STATUS_ORDER.map(function (status) {
-      var n = items.filter(function (p) { return p.status === status; }).length;
-      return n ? '<li data-status="' + status + '"><span class="dot" aria-hidden="true"></span>' + esc(t('status.' + status)) + ' <b>' + n + '</b></li>' : '';
-    }).join('') + '</ul>';
-  }
-
-  function projectIcons(items) {
-    return '<div class="cat-icons" aria-hidden="true">' + items.map(function (p) {
-      return projectIcon(p, 'cat-icon');
-    }).join('') + '</div>';
-  }
-
-  function renderCategories() {
-    var host = $('#categories');
+  function renderPillars() {
+    var host = $('#pillars');
     if (!host) return;
-
     var music = projectsIn('music');
     var other = projectsIn('other');
-
+    var pillar = function (href, media, titleKey, text, ctaKey) {
+      return '<a class="tile pillar" href="' + href + '">' +
+        '<div class="pillar-media" aria-hidden="true">' + media + '</div>' +
+        '<div><h3>' + esc(t(titleKey)) + '</h3><p>' + esc(text) + '</p>' +
+        '<span class="pillar-cta">' + esc(t(ctaKey)) + ' <span aria-hidden="true">→</span></span></div></a>';
+    };
     host.innerHTML =
-      '<a class="tile cat cat--disc" href="' + BASE + 'discography/">' +
-        '<div class="cat-copy">' +
-          '<p class="section-eyebrow">' + esc(t('disc.eyebrow')) + '</p>' +
-          '<h3 class="cat-title">' + esc(t('disc.title')) + '</h3>' +
-          '<p class="cat-text">' + esc(t('home.disc.text', { n: releases.length, artists: list(DATA.artists.map(function (a) { return a.name; })) })) + '</p>' +
-          '<span class="cat-cta">' + esc(t('home.disc.cta')) + ' <span aria-hidden="true">→</span></span>' +
+      pillar(BASE + 'discography/',
+        releases.slice(0, 3).map(function (r) { return '<img src="' + cover(r) + '" alt="" loading="lazy">'; }).join(''),
+        'pillar.label', t('home.disc.text', { n: releases.length, artists: list(DATA.artists.map(function (a) { return a.name; })) }), 'pillar.label.cta') +
+      pillar(BASE + 'software/#music',
+        music.slice(0, 3).map(function (p) { return projectIcon(p, 'pillar-icon'); }).join(''),
+        'pillar.music', t('pillar.music.text', { n: music.length }), 'pillar.music.cta') +
+      pillar(BASE + 'software/#other',
+        other.slice(0, 3).map(function (p) { return projectIcon(p, 'pillar-icon'); }).join(''),
+        'pillar.apps', t('pillar.apps.text', { n: other.length }), 'pillar.apps.cta');
+  }
+
+  function renderLatest() {
+    var host = $('#latest');
+    if (!host || !releases[0]) return;
+    var r = releases[0];
+    $('#latest-title').textContent = r.title;
+    host.innerHTML =
+      '<article class="latest">' +
+        '<img class="latest-cover" src="' + cover(r) + '" alt="' + esc(t('release.cover', { title: r.title, artist: r.artist })) + '" width="480" height="480">' +
+        '<div class="latest-body">' +
+          '<p class="release-meta">' + esc(t('release.' + r.type)) + ' · <time datetime="' + r.date + '">' + esc(formatDate(r.date)) + '</time>' + (r.catalog ? ' · ' + esc(r.catalog) : '') + '</p>' +
+          '<p class="latest-artist">' + esc(r.artist) + '</p>' +
+          '<ol class="tracklist latest-tracks" aria-label="' + esc(t('release.tracklist')) + '">' +
+            r.tracks.map(function (tr) { return '<li>' + esc(tr.title) + (tr.artist ? ' <small>· ' + esc(tr.artist) + '</small>' : '') + '</li>'; }).join('') +
+          '</ol>' +
+          '<div class="latest-listen">' + listenLinks(r, true) + '</div>' +
         '</div>' +
-        '<div class="cat-covers" aria-hidden="true">' +
-          releases.slice(0, 6).map(function (r) {
-            return '<img src="' + cover(r) + '" alt="" loading="lazy" width="240" height="240">';
-          }).join('') +
-        '</div>' +
-      '</a>' +
-      [['music', music], ['other', other]].map(function (g) {
-        return (
-          '<a class="tile cat" href="' + BASE + (g[0] === 'music' ? 'music-projects/' : 'other-projects/') + '">' +
-            '<div class="cat-copy">' +
-              '<p class="section-eyebrow">' + esc(t(g[0] + '.eyebrow')) + '</p>' +
-              '<h3 class="cat-title">' + esc(t(g[0] + '.title')) + '</h3>' +
-              '<p class="cat-text">' + esc(t(g[0] + '.sub')) + '</p>' +
-              statusSummary(g[1]) +
-              projectIcons(g[1]) +
-              '<span class="cat-cta">' + esc(t('home.' + g[0] + '.cta')) + ' <span aria-hidden="true">→</span></span>' +
-            '</div>' +
-          '</a>'
-        );
-      }).join('');
+      '</article>';
+  }
+
+  function renderFeatured() {
+    var host = $('#featured');
+    if (!host) return;
+    // Everything not archived that has a page of its own to visit.
+    var shown = DATA.projects.filter(function (p) {
+      return p.status !== 'archived' && p.url && p.live !== false && !/github\.com/.test(p.url);
+    });
+    host.innerHTML = shown.map(function (p) {
+      return '<a class="tile feat" href="' + esc(projectHref(p)) + '">' + projectIcon(p, 'feat-icon') +
+        '<span><b>' + esc(p.name) + '</b><small>' + esc(loc(p.tagline)) + '</small></span></a>';
+    }).join('');
   }
 
   /* ---------- discography ---------- */
+
+  function listenLinks(r, labelled) {
+    var out = [];
+    [['beatport', 'Beatport'], ['spotify', 'Spotify'], ['soundcloud', 'SoundCloud'], ['youtube', 'YouTube']].forEach(function (s) {
+      var url = r.links && r.links[s[0]];
+      if (!url) return;
+      var label = t('release.listenOn', { title: r.title, service: s[1] });
+      out.push(labelled
+        ? '<a class="btn btn-secondary btn-small" href="' + esc(url) + '" target="_blank" rel="noopener" aria-label="' + esc(label) + '">' + icon(s[0]) + esc(s[1]) + '</a>'
+        : '<a class="icon-btn" href="' + esc(url) + '" target="_blank" rel="noopener" title="' + esc(s[1]) + '" aria-label="' + esc(label) + '">' + icon(s[0]) + '</a>');
+    });
+    return out.join('');
+  }
 
   function renderArtists() {
     var cards = [
@@ -241,8 +334,7 @@
     DATA.artists.forEach(function (a) {
       var id = slug(a.name);
       var own = releasesBy(id);
-      var years = own.map(yearOf);
-      var span = years.length ? (years[years.length - 1] === years[0] ? years[0] : years[years.length - 1] + '–' + years[0]) : '';
+      var span = yearSpan(own);
       var active = state.artist === id;
       var spotify = t('artist.spotify', { name: a.name });
       cards.push(
@@ -278,14 +370,6 @@
   }
 
   function releaseCard(r) {
-    var links = [];
-    [['beatport', 'Beatport'], ['spotify', 'Spotify'], ['soundcloud', 'SoundCloud'], ['youtube', 'YouTube']].forEach(function (s) {
-      var url = r.links && r.links[s[0]];
-      if (!url) return;
-      var label = t('release.listenOn', { title: r.title, service: s[1] });
-      links.push('<a class="icon-btn" href="' + esc(url) + '" target="_blank" rel="noopener" title="' + esc(s[1]) + '" aria-label="' + esc(label) + '">' + icon(s[0]) + '</a>');
-    });
-
     var onlyTitleTrack = r.tracks.length === 1 && r.tracks[0].title === r.title && !r.tracks[0].artist;
     var tracks = onlyTitleTrack
       ? '<p class="release-single">' + esc(t('release.tracks', { n: 1 })) + '</p>'
@@ -306,7 +390,7 @@
           tracks +
           '<div class="release-foot">' +
             (r.catalog ? '<span class="catalog">' + esc(r.catalog) + '</span>' : '') +
-            '<div class="listen">' + links.join('') + '</div>' +
+            '<div class="listen">' + listenLinks(r, false) + '</div>' +
           '</div>' +
         '</div>' +
       '</article>'
@@ -366,13 +450,7 @@
     renderDiscography();
   }
 
-  /* ---------- projects ---------- */
-
-  function projectIcon(p, cls) {
-    if (p.icon) return '<img class="' + cls + '" src="' + BASE + 'images/products/' + esc(p.icon) + '" alt="" loading="lazy" width="56" height="56">';
-    var initials = p.name.replace(/[^A-Za-z0-9 ]/g, '').split(/\s+/).map(function (w) { return w[0]; }).join('').slice(0, 2);
-    return '<span class="' + cls + ' project-icon--letter" aria-hidden="true">' + esc(initials) + '</span>';
-  }
+  /* ---------- software ---------- */
 
   function projectAction(p) {
     if (!p.url) return '';
@@ -390,7 +468,7 @@
   function projectCard(p) {
     var linked = p.url && p.live !== false;
     var name = linked
-      ? '<a class="project-main" href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.name) + '</a>'
+      ? '<a class="project-main" href="' + esc(p.url) + '">' + esc(p.name) + '</a>'
       : esc(p.name);
 
     var extra = (p.links || []).map(function (l) {
@@ -401,9 +479,9 @@
     var kind = t('kind.' + p.kind) + (p.version ? ' · ' + p.version : '');
 
     return (
-      '<article class="tile project" data-status="' + p.status + '">' +
+      '<article class="tile project" id="' + esc(p.id) + '" data-status="' + p.status + '">' +
         '<div class="project-head">' + projectIcon(p, 'project-icon') +
-          '<div><h3 class="project-name">' + name + '</h3><p class="project-kind">' + esc(kind) + '</p></div>' +
+          '<div><h4 class="project-name">' + name + '</h4><p class="project-kind">' + esc(kind) + '</p></div>' +
         '</div>' +
         '<p class="project-tagline">' + esc(loc(p.tagline)) + '</p>' +
         '<p class="project-desc">' + esc(loc(p.description)) + '</p>' +
@@ -425,8 +503,8 @@
         if (!items.length) return '';
         return (
           '<section class="status-group" data-status="' + status + '">' +
-            '<h2 class="status-label"><span class="dot" aria-hidden="true"></span>' + esc(t('status.' + status)) +
-              ' <span class="count">' + items.length + '</span></h2>' +
+            '<h3 class="status-label"><span class="dot" aria-hidden="true"></span>' + esc(t('status.' + status)) +
+              ' <span class="count">' + items.length + '</span></h3>' +
             '<div class="project-grid">' + items.map(projectCard).join('') + '</div>' +
           '</section>'
         );
@@ -460,8 +538,11 @@
 
   function renderAll() {
     applyStaticText();
+    renderMenus();
     renderHero();
-    renderCategories();
+    renderPillars();
+    renderLatest();
+    renderFeatured();
     renderDiscography();
     renderProjects();
     fixFileLinks();
@@ -483,7 +564,29 @@
     renderSocial();
     showPalette();
 
+    // Cards rendered after load: scroll to the one a link like software/#flatq names.
+    if (location.hash.length > 1) {
+      var target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+      if (target) target.scrollIntoView();
+    }
+
     document.addEventListener('click', function (e) {
+      var caret = e.target.closest('.nav-caret');
+      if (caret) {
+        var item = caret.closest('.nav-item');
+        var open = !item.classList.contains('open');
+        closeMenus(item);
+        item.classList.toggle('open', open);
+        caret.setAttribute('aria-expanded', String(open));
+        return;
+      }
+      if (e.target.closest('.menu-toggle')) {
+        setMobileMenu(!$('.navbar').classList.contains('menu-open'));
+        return;
+      }
+      if (!e.target.closest('.nav-item')) closeMenus();
+      if (e.target.closest('.nav-links a')) setMobileMenu(false);
+
       var el = e.target.closest('[data-artist], [data-year], [data-reset], [data-lang-choice], [data-palette-choice]');
       if (!el) return;
 
@@ -503,6 +606,14 @@
         store('bpr-palette', el.dataset.paletteChoice);
         showPalette();
       }
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      var open = $('.nav-item.open');
+      closeMenus();
+      setMobileMenu(false);
+      if (open) open.querySelector('.nav-caret').focus();
     });
   }
 

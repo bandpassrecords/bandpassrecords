@@ -261,7 +261,8 @@ window.BPR = {
       platforms: ["Android", "iOS"],
       version: "v0.3.2",
       icon: "negativo.png",
-      url: "https://github.com/bandpassrecords/negativo",
+      url: "https://negativo.bandpassrecords.com/",
+      links: [["source", "https://github.com/bandpassrecords/negativo"]],
     },
     {
       id: "retro1",
@@ -282,7 +283,8 @@ window.BPR = {
       platforms: ["Android"],
       version: "v0.9.4",
       icon: "retro1.png",
-      url: "https://github.com/bandpassrecords/retro1",
+      url: "https://retro1.bandpassrecords.com/",
+      links: [["source", "https://github.com/bandpassrecords/retro1"]],
     },
   ],
 
