@@ -1,88 +1,198 @@
-<!DOCTYPE HTML>
-<!--
+<!DOCTYPE html>
+<html lang="en" data-base="">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    // Before anything paints: the palette and language picked earlier in this
+    // browser. ?palette=classic and ?lang=pt pick one by link, and are remembered.
+    (function () {
+      var root = document.documentElement;
+      try {
+        var q = new URLSearchParams(location.search);
+        var palette = q.get('palette') || localStorage.getItem('bpr-palette');
+        if (palette === 'neon' || palette === 'classic') {
+          root.dataset.palette = palette;
+          localStorage.setItem('bpr-palette', palette);
+        }
+        var lang = q.get('lang') || localStorage.getItem('bpr-lang');
+        if (lang) root.lang = lang;
+      } catch (e) {}
+    })();
+  </script>
+  <title>BandPass Records: music and tools for music makers</title>
+  <meta name="description" content="BandPass Records is an independent psytrance label and a studio building tools for music makers: DAW Project Manager, flatQ, Spinclip and more.">
+  <meta name="theme-color" content="#0A0A14">
+  <link rel="canonical" href="https://bandpassrecords.com/">
+  <link rel="alternate" hreflang="en" href="https://bandpassrecords.com/?lang=en">
+  <link rel="alternate" hreflang="pt" href="https://bandpassrecords.com/?lang=pt">
+  <link rel="alternate" hreflang="es" href="https://bandpassrecords.com/?lang=es">
+  <link rel="alternate" hreflang="x-default" href="https://bandpassrecords.com/">
 
--->
-<html>
-	<head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-		
-		<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-80417364-2"></script>
-<script src="https://code.iconify.design/2/2.2.1/iconify.min.js"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="BandPass Records">
+  <meta property="og:title" content="BandPass Records: music and tools for music makers">
+  <meta property="og:description" content="BandPass Records is an independent psytrance label and a studio building tools for music makers: DAW Project Manager, flatQ, Spinclip and more.">
+  <meta property="og:url" content="https://bandpassrecords.com/">
+  <meta property="og:image" content="https://bandpassrecords.com/images/releases/beyond-the-surface.jpg">
+  <meta name="twitter:card" content="summary">
 
-  gtag('config', 'UA-80417364-2');
-</script>
-		
-			<!-- SEO -->
-	<title>BandPass Records - Record label </title>
-	<meta name="description" content="Record label">
-	<meta name="robots" content="index, follow">
-	<meta name="referrer" content="always">
+  <link rel="icon" href="images/logo.svg" type="image/svg+xml">
+  <link rel="icon" href="images/logo_icon.png" type="image/png">
+  <link rel="apple-touch-icon" href="images/logo_icon.png">
 
-    <title>BandPass Records</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="assets/css/site.css">
 
-	<!-- add icon link -->
-	<link rel = "icon" href="images/logo_icon.png">
-    <meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-		
-		
+  <script src="assets/js/i18n.js" defer></script>
+  <script src="assets/js/icons.js" defer></script>
+  <script src="assets/js/data.js" defer></script>
+  <script src="assets/js/site.js" defer></script>
+</head>
+<body data-page="home">
+  <a class="skip" href="#content" data-i18n="skip">Skip to content</a>
 
-    </head>
-	<body class="is-preload">
+  <nav class="navbar" data-i18n-attr="aria-label:nav.sections" aria-label="Sections">
+    <div class="container nav-content">
+      <a class="logo" href="./">
+        <img class="logo-image" src="images/logo.svg" alt="" width="32" height="32">
+        <span>BandPass Records</span>
+      </a>
+      <div class="nav-links" id="site-menu">
+        <div class="nav-item" data-menu="discography">
+          <a class="nav-top" href="discography/" data-i18n="nav.discography">Discography</a>
+          <button type="button" class="nav-caret" aria-expanded="false" aria-controls="menu-discography" data-i18n-attr="aria-label:nav.more" aria-label="More">
+            <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg>
+          </button>
+          <div class="nav-menu" id="menu-discography" data-menu-panel="discography"></div>
+        </div>
+        <div class="nav-item" data-menu="software">
+          <a class="nav-top" href="software/" data-i18n="nav.software">Software</a>
+          <button type="button" class="nav-caret" aria-expanded="false" aria-controls="menu-software" data-i18n-attr="aria-label:nav.more" aria-label="More">
+            <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg>
+          </button>
+          <div class="nav-menu" id="menu-software" data-menu-panel="software"></div>
+        </div>
+        <a class="nav-top" href="#about" data-i18n="nav.about">About</a>
+        <a class="nav-top" href="#contact" data-i18n="nav.contact">Contact</a>
+      </div>
+      <div class="lang-switch" role="group" data-i18n-attr="aria-label:lang.label" aria-label="Language">
+        <button type="button" data-lang-choice="en" lang="en" title="English">EN</button>
+        <button type="button" data-lang-choice="pt" lang="pt" title="Português">PT</button>
+        <button type="button" data-lang-choice="es" lang="es" title="Español">ES</button>
+      </div>
+      <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="site-menu" data-i18n-attr="aria-label:nav.menu" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
 
-		<!-- Header -->
-			<header id="header">
-				<img class="logo" src="images/Graphic.png" alt="BandPass Records">
-				
-		        <!-- <p>BandPass Records</p> -->
-		      <div class="text">
-		        <!-- <p>Submitting demos? We accept links only (no physical copies or Mp3)</p> -->
-				  
-		      </div>
+  <main id="content">
+    <header class="hero">
+      <div class="hero-glow" aria-hidden="true"></div>
+      <svg class="hero-curve" viewBox="0 0 1200 400" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="curve-ink" x1="0" x2="1">
+            <stop class="ink-a" offset="0" stop-opacity="0"/>
+            <stop class="ink-a" offset=".45"/>
+            <stop class="ink-b" offset="1" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path d="M0,380 C330,380 430,60 600,60 C770,60 870,380 1200,380"/>
+      </svg>
+      <div class="container hero-content">
+        <a class="hero-news" id="hero-news" href="discography/" hidden>
+          <b data-i18n="hero.news">New release</b><span></span>
+        </a>
+        <img class="hero-mark" src="images/logo.svg" alt="" width="88" height="88">
+        <p class="section-eyebrow" data-i18n="hero.eyebrow">Independent label · Software studio</p>
+        <h1 class="hero-title">
+          <span data-i18n="hero.title1">Music, and the</span>
+          <span class="gradient-text" data-i18n="hero.title2">tools we make it with.</span>
+        </h1>
+        <p class="hero-subtitle" data-i18n="hero.sub">
+          BandPass Records is an independent psytrance label and a small software studio. We release music from
+          Audio Crawler, High Sense and TetraSound, and build the tools we wish we'd had: for producers, for labels,
+          and a few for everyone else.
+        </p>
+        <div class="hero-buttons">
+          <a class="btn btn-primary" href="discography/" data-i18n="hero.cta1">Listen to the catalog</a>
+          <a class="btn btn-secondary" href="software/" data-i18n="hero.cta2">Explore our software</a>
+        </div>
+      </div>
+      <dl class="stats container" id="stats"></dl>
     </header>
 
-		<!-- Signup Form -->
-			<!--<form id="signup-form" method="post" action="#">
-				<input type="email" name="email" id="email" placeholder="Email Address" />
-				<input type="submit" value="Sign Up" />
-			</form>-->
-    
-<!--    <form id="signup-form" method="post" action="#">-->
-     <!-- <input type="text" name="Name" id="name" placeholder="Name" />
-      <input type="email" name="email" id="email" placeholder="Email Address" />
-      <textarea id="type" name="type" cols="" rows="2" placeholder="Type your message here..."></textarea>-->
-		<!-- <div class="submit"><a href="mailto:info@bandpassrecords.com" target="_blank"><input type="button" value="Contact Us" /></a></div> -->
-<!--	</form>-->
-		
-		
-			
-	<br><br>
+    <section class="section" id="about" aria-labelledby="about-title">
+      <div class="container about">
+        <div class="about-copy">
+          <p class="section-eyebrow" data-i18n="about.eyebrow">About</p>
+          <h2 class="section-title" id="about-title" data-i18n="about.title">A label that also writes software.</h2>
+          <p data-i18n="about.p1">We started as a record label, putting out psytrance from artists we believe in.</p>
+          <p data-i18n="about.p2">Making music meant juggling projects across DAWs, calibrating headphones and cutting promo videos by hand, so we started writing software for it.</p>
+          <p data-i18n="about.p3">Lately the studio has gone beyond music, with apps like Negativo and Retro1.</p>
+        </div>
+        <div class="pillars" id="pillars"></div>
+      </div>
+    </section>
 
-		<!-- Footer -->
-			<footer id="footer">
-				<ul class="icons">
-					<li><a href="mailto:info@bandpassrecords.com" target="_blank" class="icon fa-envelope"><span class="label">Email</span></a></li>
-					<li><a href="https://www.beatport.com/label/bandpass-records/103779"><span href="https://www.beatport.com/label/bandpass-records/103779" target="_blank" class="iconify label" data-icon="simple-icons:beatport"></span></a></li>
-					<li><a href="https://soundcloud.com/bandpassrecords" target="_blank" class="icon brands fa-soundcloud"><span class="label">SoundCloud</span></a></li>
-					<li><a href="https://www.facebook.com/bandpassrecords" target="_blank" class="icon brands fa-facebook"><span class="label">Facebook</span></a></li>
-					<li><a href="https://www.instagram.com/bandpassrecords/" class="icon brands fa-instagram" target="_blank"><span class="label">Instagram</span></a></li>
-					<li><a href="https://twitter.com/bandpassrecords" target="_blank" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-					<li><a href="https://music.youtube.com/channel/MPREb_4XkGPYWvSdf" target="_blank" class="icon brands fa-youtube"><span class="label">Youtube</span></a></li>
-					<li><a href="https://open.spotify.com/playlist/0gqAkYnaQhZ91Cmv6YzSD7" target="_blank" class="icon brands fa-spotify"><span class="label">Spotify</span></a></li>
-				</ul>
-				<ul class="copyright">
-				  <li>&copy; BandPass Records</li>
-				</ul>
-	</footer>
+    <section class="section section-alt" aria-labelledby="latest-title">
+      <div class="container">
+        <div class="row-head">
+          <div>
+            <p class="section-eyebrow" data-i18n="latest.eyebrow">Latest release</p>
+            <h2 class="section-title" id="latest-title"></h2>
+          </div>
+          <a class="textlink" href="discography/"><span data-i18n="latest.cta">Full discography</span> →</a>
+        </div>
+        <div id="latest"></div>
+      </div>
+    </section>
 
-		<!-- Scripts -->
-			<script src="assets/js/main.js"></script>
+    <section class="section" aria-labelledby="featured-title">
+      <div class="container">
+        <div class="row-head">
+          <div>
+            <p class="section-eyebrow" data-i18n="featured.eyebrow">Software</p>
+            <h2 class="section-title" id="featured-title" data-i18n="featured.title">Made by the studio.</h2>
+          </div>
+          <a class="textlink" href="software/"><span data-i18n="featured.cta">All software</span> →</a>
+        </div>
+        <div class="featured" id="featured"></div>
+        <noscript>
+          <ul class="noscript">
+            <li><a href="discography/">Discography</a></li>
+            <li><a href="software/">Software</a></li>
+          </ul>
+        </noscript>
+      </div>
+    </section>
 
-	</body>
+    <section class="section section-alt contact" id="contact" aria-labelledby="contact-title">
+      <div class="container contact-inner">
+        <div>
+          <p class="section-eyebrow" data-i18n="contact.eyebrow">Contact</p>
+          <h2 class="section-title" id="contact-title" data-i18n="contact.title">Say hello.</h2>
+          <p class="section-subtitle" data-i18n="contact.sub">Releases, collaborations, feedback on the tools: it all lands in one inbox.</p>
+        </div>
+        <a class="contact-mail" href="mailto:info@bandpassrecords.com">info@bandpassrecords.com</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <p>© <span id="year">2026</span> BandPass Records · <a class="footer-mail" href="mailto:info@bandpassrecords.com">info@bandpassrecords.com</a></p>
+      <ul class="social" id="social" data-i18n-attr="aria-label:footer.elsewhere" aria-label="BandPass Records elsewhere"></ul>
+    </div>
+  </footer>
+
+  <div class="palette-switch" role="group" data-i18n-attr="aria-label:palette.label" aria-label="Palette">
+    <span data-i18n="palette.label">Palette</span>
+    <button type="button" data-palette-choice="neon">Neon</button>
+    <button type="button" data-palette-choice="classic">Classic</button>
+  </div>
+</body>
 </html>
