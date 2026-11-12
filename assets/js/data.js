@@ -204,7 +204,7 @@ window.BPR = {
       id: "synthax1",
       name: "Synthax1",
       group: "music",
-      status: "development",
+      status: "published",
       kind: "plugin",
       tagline: {
         en: "A virtual analog synthesizer.",
@@ -216,10 +216,14 @@ window.BPR = {
         pt: "Sintetizador VA de duas partes, com um navegador de presets feito para bibliotecas de centenas de milhares de patches e importação de bancos .fxp / .fxb legados.",
         es: "Sintetizador VA de dos partes, con un navegador de presets pensado para bibliotecas de cientos de miles de patches e importación de bancos .fxp / .fxb heredados.",
       },
-      platforms: ["VST3", "AU", "Standalone"],
-      // Not online yet: shown as "site coming soon". Set live: true once it resolves.
+      platforms: ["VST3", "AU", "Standalone", "Windows", "macOS", "Linux"],
+      version: "v0.1.0",
+      icon: "synthax1.png",
       url: "https://synthax1.bandpassrecords.com/",
-      live: false,
+      links: [
+        ["download", "https://github.com/bandpassrecords/synthax1/releases/latest"],
+        ["source", "https://github.com/bandpassrecords/synthax1"],
+      ],
     },
     {
       id: "daw-macros-hub",
