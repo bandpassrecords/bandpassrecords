@@ -177,8 +177,11 @@ window.BPR = {
       platforms: ["Windows", "macOS", "Linux"],
       version: "v0.2.0",
       icon: "spinclip.svg",
-      url: "https://github.com/bandpassrecords/spinclip/releases/latest",
-      links: [["source", "https://github.com/bandpassrecords/spinclip"]],
+      url: "https://spinclip.bandpassrecords.com/",
+      links: [
+        ["download", "https://github.com/bandpassrecords/spinclip/releases/latest"],
+        ["source", "https://github.com/bandpassrecords/spinclip"],
+      ],
     },
     {
       id: "sc-download-gating",
